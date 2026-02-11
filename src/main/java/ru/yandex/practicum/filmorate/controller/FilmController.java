@@ -9,8 +9,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/films")
@@ -19,7 +19,7 @@ public class FilmController {
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
-    private final Map<Long, Film> films = new HashMap<>();
+    private final Map<Long, Film> films = new ConcurrentHashMap<>();
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -56,11 +56,15 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film newFilm) {
         // проверяем необходимые условия
         validate(newFilm);
-        if (films.containsKey(newFilm.getId())) {
+        if (exists(newFilm)) {
             films.put(newFilm.getId(), newFilm);
             return newFilm;
         }
         throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
+    }
+
+    private boolean exists(Film film) {
+        return films.containsKey(film.getId());
     }
 
 }

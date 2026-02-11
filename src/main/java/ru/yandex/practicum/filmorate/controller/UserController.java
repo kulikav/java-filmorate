@@ -2,20 +2,21 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    private final Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new ConcurrentHashMap<>();
 
     @GetMapping
     public Collection<User> findAll() {
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     private void validate(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (StringUtils.isBlank(user.getName())) {
             user.setName(user.getLogin());
         }
     }
@@ -52,10 +53,15 @@ public class UserController {
     public User update(@Valid @RequestBody User newUser) {
         // проверяем необходимые условия
         validate(newUser);
-        if (users.containsKey(newUser.getId())) {
+        if (exists(newUser)) {
             users.put(newUser.getId(), newUser);
             return newUser;
         }
         throw new NotFoundException("Пользователь с id = " + newUser.getId() + " не найден");
     }
+
+    private boolean exists(User user) {
+        return users.containsKey(user.getId());
+    }
+
 }

@@ -25,11 +25,6 @@ public class FilmTest {
         validator = factory.getValidator();
     }
 
-    // Вставьте здесь ваш метод validate или вызывайте его из контроллера
-    private void validate(Film film) {
-        FilmController.validate(film);
-    }
-
     @Test
     void shouldThrowExceptionWhenReleaseDateIsTooEarly() {
         Film film = new Film();
@@ -101,5 +96,9 @@ public class FilmTest {
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty(), "Нулевая продолжительность должна быть отклонена");
+    }
+
+    private void validate(Film film) {
+        FilmController.validate(film);
     }
 }
