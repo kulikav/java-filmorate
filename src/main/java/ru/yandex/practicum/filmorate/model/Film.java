@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -26,4 +28,6 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private Integer duration;
+
+    private Set<Long> likes = new HashSet<>(); // список лайков (id user)
 }
