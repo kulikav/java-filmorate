@@ -42,11 +42,35 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User findById(Long id) {
-        if (!users.containsKey(id)) {
+        if (!existById(id)) {
             // Выбрасываем исключение, если ID нет в мапе
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
         return users.get(id);
+    }
+
+    @Override
+    public boolean existById(Long id) {
+        return users.containsKey(id);
+    }
+
+    @Override
+    public Collection<User> getFriends(Long userId){
+               User user = findById(userId);
+        return user.getFriends().stream()
+                .map(this::findById)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    public Collection<User> getCommonFriends(Long userId, Long otherId) {
+        User user = findById(userId);
+        User other = findById(otherId);
+
+        return user.getFriends().stream()
+                .filter(other.getFriends()::contains)
+                .map(this::findById)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     private void validate(User user) {

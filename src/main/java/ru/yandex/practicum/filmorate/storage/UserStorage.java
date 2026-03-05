@@ -14,4 +14,10 @@ public interface UserStorage {
 
     User findById(Long id);
 
+    boolean existById(Long id);
+
+    Collection<User> getFriends(Long userId);
+
+    Collection<User> getCommonFriends(Long userId, Long otherId);
+
 }

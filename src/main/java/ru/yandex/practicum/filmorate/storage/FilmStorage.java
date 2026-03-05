@@ -15,4 +15,8 @@ public interface FilmStorage {
 
     Film findById(Long id);
 
+    boolean existsById(Long id);
+
+    Collection<Film> getPopular(int count);
+
 }

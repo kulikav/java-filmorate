@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -45,11 +46,24 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film findById(Long id) {
-        if (!films.containsKey(id)) {
+        if (!existsById(id)) {
             // Выбрасываем исключение, если ID нет в мапе
             throw new NotFoundException("Фильм с id " + id + " не найден");
         }
         return films.get(id);
+    }
+
+    @Override
+    public Collection<Film> getPopular(int count) {
+        return findAll().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return films.containsKey(id);
     }
 
     public static void validate(Film film) {

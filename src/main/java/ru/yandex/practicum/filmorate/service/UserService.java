@@ -42,20 +42,11 @@ public class UserService {
     }
 
     public Collection<User> getFriends(Long userId) {
-        User user = userStorage.findById(userId);
-        return user.getFriends().stream()
-                .map(userStorage::findById)
-                .collect(java.util.stream.Collectors.toList());
+        return userStorage.getFriends(userId);
     }
 
     public Collection<User> getCommonFriends(Long userId, Long otherId) {
-        User user = userStorage.findById(userId);
-        User other = userStorage.findById(otherId);
-
-        return user.getFriends().stream()
-                .filter(other.getFriends()::contains)
-                .map(userStorage::findById)
-                .collect(java.util.stream.Collectors.toList());
+        return userStorage.getCommonFriends(userId, otherId);
     }
 
     public User findById(Long id) {
